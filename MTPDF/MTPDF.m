@@ -101,6 +101,19 @@
     return PDF;
 }
 
+- (NSUInteger)numberOfPages
+{
+	return [self.pages count];
+}
+
+- (MTPDFPage *)pageAtIndex:(NSUInteger)index
+{
+	if (index >= [self numberOfPages]) {
+		return nil;
+	}
+	
+	return [self.pages objectAtIndex:index];
+}
 
 - (BOOL)unlockWithPassword:(NSString *)password
 {
@@ -250,6 +263,32 @@
 	UIGraphicsEndImageContext();
 
 	return resultingImage;
+}
+
+- (UIImage *)imageWithSize:(CGSize)size
+{
+	UIGraphicsBeginImageContextWithOptions(size, NO, [UIScreen mainScreen].scale);
+
+	[self renderIntoContext:UIGraphicsGetCurrentContext() size:size];
+
+	UIImage *pdfImage = UIGraphicsGetImageFromCurrentImageContext();
+
+	UIGraphicsEndImageContext();
+
+	return pdfImage;
+}
+
+- (void)renderIntoContext:(CGContextRef)context size:(CGSize)size
+{
+	CGContextGetCTM(context);
+	CGContextScaleCTM(context, 1.0, -1.0);
+	CGContextTranslateCTM(context, 0, -size.height);
+
+	CGRect rect = CGPDFPageGetBoxRect(self.reference, kCGPDFCropBox);
+	CGContextScaleCTM(context, size.width / rect.size.width, size.height / rect.size.height);
+	CGContextTranslateCTM(context, -rect.origin.x, -rect.origin.y);
+
+	CGContextDrawPDFPage(context, self.reference);
 }
 
 

@@ -7,6 +7,9 @@
 //
 
 
+@class MTPDFPage;
+
+
 @interface MTPDF : NSObject
 
 
@@ -30,6 +33,11 @@
 + (MTPDF *)PDFWithContentsOfURL:(NSURL *)aURL;
 + (MTPDF *)PDFWithData:(NSData *)data;
 
+
+- (NSUInteger)numberOfPages;
+- (MTPDFPage *)pageAtIndex:(NSUInteger)index;
+
+
 - (BOOL)unlockWithPassword:(NSString *)password;
 - (void)writeToFile:(NSString *)path;
 
@@ -47,6 +55,7 @@
 
 - (void)drawInContext:(CGContextRef)context;
 - (UIImage *)imageWithPixelsPerPoint:(NSInteger)ppp;
+- (UIImage *)imageWithSize:(CGSize)size;
 
 @end
 
