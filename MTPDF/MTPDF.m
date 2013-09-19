@@ -67,12 +67,12 @@
             _subject        = [self getKey:"Subject"        from:dict];
 
             NSString *creationDateString = [self getKey:"CreationDate" from:dict];
-            if (creationDateString)
+            if (creationDateString && [creationDateString length])
                 _creationDate = [self dateFromPDFDateString:creationDateString];
 
 
             NSString *modifiedDateString = [self getKey:"ModDate" from:dict];
-            if (modifiedDateString)
+            if (modifiedDateString && [modifiedDateString length])
                 _modifiedDate = [self dateFromPDFDateString:modifiedDateString];
         }
     }
@@ -157,6 +157,10 @@
 // D: 2011 11 03 11 31 32 +11 '00'
 - (NSDate *)dateFromPDFDateString:(NSString *)string
 {
+	if (!string || ![string length]) {
+		return nil;
+	}
+
     NSRange yearRange   = NSMakeRange(2, 4);
     NSRange monthRange  = NSMakeRange(yearRange.location    + yearRange.length,     2);
     NSRange dayRange    = NSMakeRange(monthRange.location   + monthRange.length,    2);
